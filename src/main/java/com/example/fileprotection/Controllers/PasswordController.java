@@ -58,7 +58,9 @@ public class PasswordController implements Initializable {
           if(passCount>=10){
               FileUtils.forceDelete(file);
               dao.delData(account);
+              passCount=0;
               dialogUtil.showAlert("Delete file","File is deleted!", Alert.AlertType.INFORMATION);
+
               window.close();
 
           }
@@ -66,21 +68,9 @@ public class PasswordController implements Initializable {
             long waitingTime=1;
             dialogUtil.showAlert("Error", "Try too many time! Waiting " + waitingTime + " more minutes to retry", Alert.AlertType.ERROR);
             dao.updateExpireTime(account,account.getExpireAt().plusMinutes(waitingTime));
-//                String token=cryptoUtil.genRandomAlphaNumeric(10);
-//                passCount=0;
-//                String content=fileUtil.readFile(file);
-//                String decryptContent=cryptoUtil.decryptData(passwordTxt.getText(),account.getCreateAt(),content);
-//                dao.updatePassword(account,BCrypt.hashpw(token,BCrypt.gensalt(12)));
-//
-//
-//
-//                file.setWritable(true);
-//                String encryptContent=cryptoUtil.encyptData(token,account.getCreateAt(),content);
-//                fileUtil.writeFile(encryptContent,file);
-//                file.setWritable(false);
-//                EmailUtil.sendEmail("Changing password","New password: "+token);
+
           }
-            return;
+        return;
         }
 
         String content=fileUtil.readFile(file);
