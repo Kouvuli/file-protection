@@ -3,10 +3,7 @@ package com.example.fileprotection.Controllers;
 
 import com.example.fileprotection.DAO.AccountDAO;
 import com.example.fileprotection.Entities.Account;
-import com.example.fileprotection.Utils.CryptoUtil;
-import com.example.fileprotection.Utils.DialogUtil;
-import com.example.fileprotection.Utils.EmailUtil;
-import com.example.fileprotection.Utils.FileUtil;
+import com.example.fileprotection.Utils.*;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -14,18 +11,16 @@ import javafx.scene.Node;
 import javafx.scene.control.Alert;
 import javafx.scene.control.PasswordField;
 import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
 import org.mindrot.jbcrypt.BCrypt;
 
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
-import java.util.concurrent.TimeUnit;
-import  org.apache.commons.io.FileUtils;
+
 public class PasswordController implements Initializable {
 
     @FXML
@@ -52,7 +47,7 @@ public class PasswordController implements Initializable {
 
         DateTimeFormatter formatter=DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         if(account.getExpireAt().isAfter(LocalDateTime.now())){
-            dialogUtil.showAlert("Error", "File will be available at: " + account.getExpireAt().format(formatter) + "\n You have " + (20 - passCount) + " more tries and the file will be delete", Alert.AlertType.ERROR);
+            dialogUtil.showAlert("Error", "File will be available at: " + account.getExpireAt().format(formatter) + "\n You have " + (10 - passCount) + " more tries and the file will be delete", Alert.AlertType.ERROR);
             return;
         }
         if(!BCrypt.checkpw(passwordTxt.getText(),account.getPassword())){
@@ -61,12 +56,7 @@ public class PasswordController implements Initializable {
 
           passCount++;
           if(passCount>=10){
-
-              file.setWritable(true);
-              file.setExecutable(true);
-              file.setReadable(true);
               FileUtils.forceDelete(file);
-//              file.delete();
               dao.delData(account);
               dialogUtil.showAlert("Delete file","File is deleted!", Alert.AlertType.INFORMATION);
               window.close();
@@ -90,7 +80,7 @@ public class PasswordController implements Initializable {
 //                file.setWritable(false);
 //                EmailUtil.sendEmail("Changing password","New password: "+token);
           }
-
+            return;
         }
 
         String content=fileUtil.readFile(file);

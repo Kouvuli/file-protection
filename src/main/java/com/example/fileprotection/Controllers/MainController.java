@@ -16,6 +16,7 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.apache.commons.io.FileUtils;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -67,16 +68,19 @@ public class MainController implements Initializable {
     @FXML
     void onDeleteFile(ActionEvent event) {
         try {
-            File file=new File(filePathTxt.getText()+"/"+fileNameTxt.getText());
+
             if(!fileIsExist()){
                 dialogUtil.showAlert("Error","File not exist", Alert.AlertType.ERROR);
             }
             else{
-                boolean result=file.delete();
-                if(!result){
+                File file=new File(filePathTxt.getText()+"/"+fileNameTxt.getText());
+                if(!file.canWrite()){
                     dialogUtil.showAlert("Warning","Cannot delete file", Alert.AlertType.WARNING);
+
                 }else{
+                    FileUtils.forceDelete(file);
                     dialogUtil.showAlert("Info","Delete file succesfully",Alert.AlertType.INFORMATION);
+
                 }
             }
 
@@ -88,12 +92,12 @@ public class MainController implements Initializable {
     @FXML
     void onLockFile(ActionEvent event) {
         try {
-            File file=new File(filePathTxt.getText()+"/"+fileNameTxt.getText());
+
             if(!fileIsExist()){
                 dialogUtil.showAlert("Error","File not exist", Alert.AlertType.ERROR);
             }
             else{
-
+                File file=new File(filePathTxt.getText()+"/"+fileNameTxt.getText());
                 if(!file.canWrite()){
                     dialogUtil.showAlert("Info","File is already lock",Alert.AlertType.INFORMATION);
                 }
@@ -116,10 +120,6 @@ public class MainController implements Initializable {
                     window.setTitle("New password");
                     window.setScene(editScene);
                     window.showAndWait();
-//                    AccountDAO dao=new AccountDAO();
-//                    Account account=dao.getAccountByFilePathAndFileName(filePathTxt.getText(),fileNameTxt.getText());
-//
-//                    fileUtil.writeFile(cryptoUtil.encyptData(account.getPassword(),account.getCreateAt(), fileUtil.readFile(file)),file);
 
                 }
 
@@ -142,18 +142,7 @@ public class MainController implements Initializable {
             }
 
             String content=fileUtil.readFile(file);
-
-//            FileReader fileReader=new FileReader(file);
-//            BufferedReader bufferedReader=new BufferedReader(fileReader);
-//            String content="";
-//            String currentLine=bufferedReader.readLine();
-//            while(currentLine!=null){
-//                content+=currentLine;
-//                currentLine= bufferedReader.readLine();
-//            }
-
             contentTxt.setText(content);
-
 
 
         }catch (Exception e){
@@ -164,11 +153,11 @@ public class MainController implements Initializable {
     @FXML
     void onUnlockFile(ActionEvent event) {
         try {
-            File file=new File(filePathTxt.getText()+"/"+fileNameTxt.getText());
             if(!fileIsExist()){
                 dialogUtil.showAlert("Error","File not exist", Alert.AlertType.ERROR);
             }
             else{
+                File file=new File(filePathTxt.getText()+"/"+fileNameTxt.getText());
                 if(file.canWrite()){
                     return;
                 }
@@ -194,6 +183,7 @@ public class MainController implements Initializable {
             }
 
         }catch(Exception e){
+
             dialogUtil.showAlert("Error","Cannot unlock file please check permission", Alert.AlertType.ERROR);
         }
     }

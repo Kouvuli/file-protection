@@ -21,7 +21,7 @@ public class FileUtil {
             count++;
             System.out.println(count);
         }
-        
+
         content=sb.toString();
 //        return sb.toString();
 //        String currentLine=bufferedReader.readLine();
@@ -30,6 +30,10 @@ public class FileUtil {
 //
 //            currentLine= bufferedReader.readLine();
 //        }
+        bufferedReader.close();
+        isr.close();
+        fis.close();
+
         return content;
     }
 
@@ -38,5 +42,6 @@ public class FileUtil {
         BufferedWriter bufferedWriter=new BufferedWriter(fileWriter);
         bufferedWriter.write(data);
         bufferedWriter.flush();
+        fileWriter.close();
     }
 }
